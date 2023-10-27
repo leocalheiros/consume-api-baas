@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Consume API BaaS
+
+Globals:
+  Function:
+    Timeout: 3
+    MemorySize: 128
+
+Resources:
+  ConsumeApiBaasFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./
+      Handler: lambda_handler.lambda_handler
+      Runtime: python3.11
+      Architectures:
+        - x86_64
+      Events:
+        ApiGateway:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+
+Outputs:
+  ConsumeApiBaasFunctionApi:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/{proxy+}/"
+  ConsumeApiBaasFunction:
+    Description: "Lambda Function ARN"
+    Value: !GetAtt ConsumeApiBaasFunction.Arn
+  ConsumeApiBaasFunctionIamRole:
+    Description: "IAM Role created for Lambda Function"
+    Value: !GetAtt ConsumeApiBaasFunctionRole.Arn

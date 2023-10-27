@@ -10,6 +10,8 @@ __pycache__/
 # C extensions
 *.so
 
+.aws-sam
+
 # Distribution / packaging
 .Python
 build/
