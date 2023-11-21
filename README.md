@@ -2,7 +2,7 @@
 
 ## Descrição do Projeto
 
-Este é um projeto feito para consumir APIs especificando seu type (que seria o nome fictício da api que queremos lidar) e o action (que seria a ação da rota da api desejada), neste projeto consumo uma api de BaaS (que se encontra no repositório api-baas-dynamodb) e faço toda sua lógica a partir do conceito do projeto. 
+Este é um projeto feito para consumir APIs especificando seu type (que seria o nome fictício da api que queremos lidar) e o action (que seria a ação da rota da api desejada) ou chamando os endpoints de forma separada caso desejar. Neste projeto consumo uma api de BaaS (que se encontra no repositório api-baas-dynamodb) e faço toda sua lógica a partir do conceito do projeto. 
 
 
 ## Configuração do Ambiente
@@ -20,6 +20,7 @@ pip install --target ./package nomedapackage
 ```
 
 ## Como usar a API:
+**Utilizando o endpoint geral execute**:
 - **Endpoint único**: `/execute`
 - **Método**: POST
 - **Entrada**: JSON contendo "type" e "action" obrigatórios
@@ -29,12 +30,18 @@ pip install --target ./package nomedapackage
   ...resto do json
   }
   
+**Utilizando os endpoints separados**:
+  - **Endpoints**:
+   - para operações com os account controllers: `/account/{action}` Ex: `/account/login`
+  - para operações com os payments controllers: `/payments/{action}` Ex: `/payments/create-payment`
+  - para operações com os saldo controllers: `/balance/{action}` Ex: `/balance/deposit`
+  
 ## Autenticação JWT
 - **Headers**:
 - **Bearer token gerado no login**
 - **Email do login**
 
-## Actions da API
+## Actions da API BaaS
 ### Criar pessoa
 
 - **Action**: `create-person`
