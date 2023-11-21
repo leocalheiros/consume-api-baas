@@ -5,17 +5,18 @@ from .types.http_bad_request import HttpBadRequest
 from .types.http_unauthorized import HttpUnauthorizedError
 from .types.http_invalid_action import HttpInvalidActionError
 from .types.http_invalid_type import HttpInvalidTypeError
+from .types.http_request_error import HttpRequestError
 
 
 def handle_errors(error: Exception) -> HttpResponse:
     if isinstance(error, (HttpNotFoundError, HttpUnprocessableEntityError, HttpBadRequest, HttpUnauthorizedError,
-                          HttpInvalidActionError, HttpInvalidTypeError)):
+                          HttpInvalidActionError, HttpInvalidTypeError, HttpRequestError)):
         return HttpResponse(
             status_code=error.status_code,
             body={
                 "errors": [{
-                    "title": error.name,
-                    "detail": error.message
+                    "type_error": error.name,
+                    "message_error:": error.message
                 }]
             }
         )
