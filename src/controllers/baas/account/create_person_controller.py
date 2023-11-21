@@ -1,12 +1,17 @@
-import requests
-from src.controllers.baas.interface.baas_controller_interface import BaasControllerInterface
+from src.controllers.interface.request_interface import RequestInterface
+from src.controllers.interface.api_consumer_interface import ApiConsumerInterface
 
 
-class CreatePersonController(BaasControllerInterface):
-    def __init__(self, api_url: str) -> None:
+class CreatePersonController(RequestInterface):
+    def __init__(self, api_consumer: ApiConsumerInterface, api_method: str, api_url: str) -> None:
+        self.__api_consumer = api_consumer
+        self.api_method = api_method
         self.api_url = api_url
+        self.api_headers = {
+            "Content-type": "application/json",
+        }
 
-    def operate(self, person_data: dict) -> any:
+    def send_request(self, person_data: dict) -> any:
         self.__validate(person_data)
         email = person_data.get("email")
         senha = person_data.get("senha")
@@ -16,16 +21,10 @@ class CreatePersonController(BaasControllerInterface):
             "senha": senha,
             "saldo": saldo
         }
-        response = requests.post(self.api_url, json=account_information)
-        return self.__format_response(response)
+        response = self.__api_consumer.request_response(self.api_method, self.api_url, self.api_headers,
+                                                        account_information)
+        return response
 
     def __validate(self, person_data: dict) -> None:
         if 'saldo' not in person_data or person_data['saldo'] is None:
             person_data['saldo'] = 0
-
-    def __format_response(self, response):
-        return self.__parse_api_response(response), response.status_code
-
-    def __parse_api_response(self, response) -> dict:
-        return response.json()
-
