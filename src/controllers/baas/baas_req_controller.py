@@ -1,4 +1,5 @@
 from src.controllers.baas.interface.baas_req_interface_controller import BaasReqInterface
+from src.infra.requests.api_consumer import ApiConsumer
 from src.controllers.baas.account.create_person_controller import CreatePersonController
 from src.controllers.baas.account.login_controller import LoginController
 from src.controllers.baas.account.get_person_controller import GetPersonController
@@ -12,15 +13,17 @@ from src.errors.types.http_invalid_action import HttpInvalidActionError
 
 class BaasReqController(BaasReqInterface):
     def __init__(self):
+        base_url = 'https://x0wiy4jqdf.execute-api.us-east-1.amazonaws.com/Prod'
+        api_consumer = ApiConsumer()
         self.controllers = {
-            "create-person": CreatePersonController('https://x0wiy4jqdf.execute-api.us-east-1.amazonaws.com/Prod/create-person'),
-            "login": LoginController('https://x0wiy4jqdf.execute-api.us-east-1.amazonaws.com/Prod/login'),
-            "get-person": GetPersonController('https://x0wiy4jqdf.execute-api.us-east-1.amazonaws.com/Prod/get-person'),
-            "deposit-saldo": DepositSaldoController('https://x0wiy4jqdf.execute-api.us-east-1.amazonaws.com/Prod/deposit-saldo'),
-            "transfer-saldo": TransferSaldoController('https://x0wiy4jqdf.execute-api.us-east-1.amazonaws.com/Prod/transfer-saldo'),
-            "withdraw-saldo": WithdrawSaldoController('https://x0wiy4jqdf.execute-api.us-east-1.amazonaws.com/Prod/withdraw-saldo'),
-            "register-credit-card": RegisterCreditCardController('https://x0wiy4jqdf.execute-api.us-east-1.amazonaws.com/Prod/register-credit-card'),
-            "create-payment": CreatePaymentController('https://x0wiy4jqdf.execute-api.us-east-1.amazonaws.com/Prod/create-payment')
+            "create-person": CreatePersonController(api_consumer, 'POST', f'{base_url}/create-person'),
+            "login": LoginController(api_consumer, 'POST', f'{base_url}/login'),
+            "get-person": GetPersonController(api_consumer, 'POST', f'{base_url}/get-person'),
+            "deposit-saldo": DepositSaldoController(api_consumer, 'POST', f'{base_url}/deposit-saldo'),
+            "transfer-saldo": TransferSaldoController(api_consumer, 'POST', f'{base_url}/transfer-saldo'),
+            "withdraw-saldo": WithdrawSaldoController(api_consumer, 'POST', f'{base_url}/withdraw-saldo'),
+            "register-credit-card": RegisterCreditCardController(api_consumer, 'POST', f'{base_url}/register-credit-card'),
+            "create-payment": CreatePaymentController(api_consumer, 'POST', f'{base_url}/create-payment')
         }
 
     def operate(self, data: dict) -> any:
@@ -28,6 +31,6 @@ class BaasReqController(BaasReqInterface):
         controller = self.controllers.get(action)
 
         if controller:
-            return controller.operate(data)
+            return controller.send_request(data)
         else:
             raise HttpInvalidActionError("Action inválida!")
